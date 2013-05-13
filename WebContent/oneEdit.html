@@ -142,7 +142,45 @@
 									  var replaced_width_src = suggestions[i].suggested.mugshot_url_template.replace("{width}", "55");
 							          var replaced_src = replaced_width_src.replace("{height}", "55");
 							          
-							          $("#suggestions").append('<div id="chef_profile" class="invite_individual_class"><div style="float:left;"><img src="'+ replaced_src +'" alt="Name" class="profile_img"></div><div style="float:left;"><div><p>'+ suggestions[i].suggested.full_name +'</p></div><div><button id="invite_friend" class="invite_green_button">Invite</button></div></div></div>');
+							          $("#suggestions").append('<div id="chef_profile" class="invite_individual_class"><div style="float:left;"><img src="'+ replaced_src +'" alt="Name" class="profile_img"></div><div style="float:left;"><div><p>'+ suggestions[i].suggested.full_name +'</p></div><div><button id="invite_friend" name="'+suggestions[i].suggested.id+'" class="invite_green_button">Invite</button></div></div></div>');
+							          
+							          $("#invite_friend").click(function(event){
+							          	  yam.request({
+										        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
+										        method: "POST",
+										        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+										        	"body":"I want you to know about RealCollab. I have been using this tool and this has provided me great productivity at my work. Please click following URL to try \n http://localhost:8080/RealCollab/getStarted.html",
+										        	"direct_to_id":$(this).attr('name')
+										        },
+										        success: function (message) { //print message response information to the console
+										          console.dir(message);
+										          yam.request({
+												        url: "https://www.yammer.com/api/v1/suggestions.json",     //this is one of many REST endpoints that are available
+												        method: "GET",
+												        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+												        	"limit":"3"
+												        },
+												        success: function (suggestions) { //print message response information to the console
+												        	$("#suggestions").empty();  
+												        	for (var i=0;i<suggestions.length;i++) {
+																  var replaced_width_src = suggestions[i].suggested.mugshot_url_template.replace("{width}", "55");
+														          var replaced_src = replaced_width_src.replace("{height}", "55");
+														          
+														          $("#suggestions").append('<div id="chef_profile" class="invite_individual_class"><div style="float:left;"><img src="'+ replaced_src +'" alt="Name" class="profile_img"></div><div style="float:left;"><div><p>'+ suggestions[i].suggested.full_name +'</p></div><div><button id="invite_friend" name="'+suggestions[i].suggested.id+'" class="invite_green_button">Invite</button></div></div></div>');
+														          
+															  }
+												        	
+												        },
+												        error: function (suggestions) {
+												          alert("There was an error with the request.");
+												        }
+												      });
+										        },
+										        error: function (message) {
+										          alert("message:There was an error with the request.");
+										        }
+										      });
+							          });
 								  }
 					        	
 					        },
