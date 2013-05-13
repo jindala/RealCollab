@@ -247,7 +247,6 @@
     
     <script>
 	  //Initialize Firebase 
-	  //var firepadRef = new Firebase('https://realcollaboration.firebaseio.com/');
       var firepadRef = new Firebase('https://realcollab.firebaseio.com/');
 	  var firepadDiv = document.getElementById('firepad');
 	  
@@ -259,16 +258,16 @@
 	      { richTextShortcuts: true, richTextToolbar: true });
       
       //Text editing
-      firepad.on('ready', function() {
-          if (firepad.isHistoryEmpty()) {
+      /*firepad.on('ready', function() {
+          /*if (firepad.isHistoryEmpty()) {
             var f = Firepad.Formatting().fontSize(24);
-            firepad.setText([
+            /*firepad.setText([
               Firepad.Text("Rich-text", f.italic(true).color('green')),
               Firepad.Text(" editing with ", f),
               Firepad.Text("Firepad!", f.color('red'))
             ]);
           }
-        });
+        });*/
       
       //Save on Client end
       function saveContent(){
@@ -316,7 +315,6 @@
 	    var pixSize = 2, lastPoint = null, currentColor = "000", mouseDown = 0;
 	
 	    //Create a reference to the pixel data for our drawing.
-	    //var pixelDataRef = new Firebase('https://realcollaboration.firebaseio.com/');
 	    var pixelDataRef = new Firebase('https://realcollab.firebaseio.com/');
 	
 	    // Set up our canvas
