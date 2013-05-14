@@ -60,11 +60,8 @@
 		var user_id_string = sPageURL.replace("id=", "");
 		var user_id_array = user_id_string.split(',');
 		var activity_string = {'activity':{'action': 'create','object':{'url':'http://localhost:8080/RealCollab/getStarted.html',
-			'title':'Real-time collaborative meeting'}, 'actor':{}},'message': 'I am collaborating with ',
-				'users': [
-				          {'name': 'Ganesh Guttikonda', 'email' : 'gani@hp.com'},
-				          {'name': 'Ganesh Guttikonda', 'email' : 'anupam.jindal@hp.com'}
-				        ]};
+			'title':'Real-time collaborative meeting'}, 'actor':{}}
+				};
 		$("#drawpad").hide();
 		$("#colorholder").hide();
 		
