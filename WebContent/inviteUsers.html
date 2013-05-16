@@ -16,6 +16,7 @@
 		var loggedin_user;
 		var final_id;
 		var selected_user_list = "";
+		var rcId = "";
 		yam.getLoginStatus(
 				  function(response) {
 				    if (response.authResponse) {
@@ -68,12 +69,13 @@
 							          }
 							          
 							          $("button").click(function() {
-							        	  $(this).attr("disabled", "disabled");
-							        	  $(this).addClass("disabled_green_button");
-							        	  $(this).html("Selected");
-							        	  $("#done_button").show();
-							        	  final_id=$(this).attr('id');
-							        	  selected_user_list += final_id + ",";
+							        	  	$(this).attr("disabled", "disabled");
+							        	  	$(this).addClass("disabled_green_button");
+								        	final_id=$(this).attr('id');
+								        	selected_user_list += final_id + ",";
+								   			
+								            $(this).html("Selected");
+								        	$("#done_button").show();
 							          });
 							        },
 							        error: function (group_users) {
@@ -99,22 +101,41 @@
 				);
 		
 		$("#done_button").click(function() {
-      	  // Send Messaged to users
-      	  yam.request({
-			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
-			        method: "POST",
-			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://localhost:8080/RealCollab/oneEdit.html?id="+selected_user_list,
-			        	"direct_to_ids":selected_user_list
-			        },
-			        success: function (message) { //print message response information to the console
-			          console.dir(message);	
-			          window.location.replace("http://localhost:8080/RealCollab/oneEdit.html?id="+selected_user_list);
-			        },
-			        error: function (message) {
-			          alert("message:There was an error with the request.");
-			        }
-			      });
+			
+			$.ajax({
+		   		url:"/RealCollab/sessionToken?invitor="+loggedin_user+"&invitees="+selected_user_list,
+		   		type: "get",
+		   		success: function(response, textStatus, jqXHR){	
+		   			alert(response);
+		            rcId = response.realCollabId;
+
+		        	  // Send Messaged to users
+		        	  yam.request({
+		  			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
+		  			        method: "POST",
+		  			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+		  			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://localhost:8080/RealCollab/oneEdit.html?rcId="+rcId,
+		  			        	"direct_to_ids":selected_user_list
+		  			        },
+		  			        success: function (message) { //print message response information to the console
+		  			          console.dir(message);	
+		  			          window.location.replace("http://localhost:8080/RealCollab/oneEdit.html?rcId="+rcId);
+		  			        },
+		  			        error: function (message) {
+		  			          alert("message:There was an error with the request.");
+		  			        }
+		  			  });
+		        },
+		        // callback handler that will be called on error
+		        error: function(jqXHR, textStatus, errorThrown){
+		            // log the error to the console
+		            alert(
+		                "The following error occured: "+
+		                textStatus, errorThrown
+		            );
+		        }
+		   	});	
+
 			
 		});
 		
