@@ -144,9 +144,8 @@
 					        url: "https://www.yammer.com/api/v1/activity.json",     //this is one of many REST endpoints that are available
 					        method: "POST",
 					        dataType: "json",
-					        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-					        	"body":final_activity_string
-					        },
+					        contentType: "application/json",
+					        data: activity_string,
 					        success: function (activity) { //print message response information to the console
 					          console.dir(activity);	
 					        },
