@@ -61,7 +61,7 @@
 		var user_id_array = page_id_string.split(',');
 		var session_id ="";
 		var tokenVal = "";
-		var activity_string = {'activity':{'action': 'create','object':{'url':'http://localhost:8080/RealCollab/getStarted.html',
+		var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com:8080/RealCollab/getStarted.html',
 			'title':'Real-time collaborative meeting'}, 'actor':{}}
 				};
 		$("#drawpad").hide();
@@ -211,7 +211,7 @@
 										        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
 										        method: "POST",
 										        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-										        	"body":"I want you to know about RealCollab. I have been using this tool and this has provided me great productivity at my work. Please click following URL to try \n http://localhost:8080/RealCollab/getStarted.html",
+										        	"body":"I want you to know about RealCollab. I have been using this tool and this has provided me great productivity at my work. Please click following URL to try \n http://www.realcolab.com:8080/RealCollab/getStarted.html",
 										        	"direct_to_id":$(this).attr('name')
 										        },
 										        success: function (message) { //print message response information to the console

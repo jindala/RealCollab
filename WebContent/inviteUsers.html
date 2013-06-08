@@ -114,12 +114,12 @@
 		  			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
 		  			        method: "POST",
 		  			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-		  			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://localhost:8080/RealCollab/oneEdit.html?rcId="+rcId,
+		  			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://www.realcolab.com:8080/RealCollab/oneEdit.html?rcId="+rcId,
 		  			        	"direct_to_ids":selected_user_list
 		  			        },
 		  			        success: function (message) { //print message response information to the console
 		  			          console.dir(message);	
-		  			          window.location.replace("http://localhost:8080/RealCollab/oneEdit.html?rcId="+rcId);
+		  			          window.location.replace("http://www.realcolab.com:8080/RealCollab/oneEdit.html?rcId="+rcId);
 		  			        },
 		  			        error: function (message) {
 		  			          alert("message:There was an error with the request.");
