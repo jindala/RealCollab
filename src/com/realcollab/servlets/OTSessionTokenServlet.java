@@ -44,7 +44,10 @@ public class OTSessionTokenServlet extends HttpServlet {
 		}
 		else if(reqParamMap.get("invitees") != null && reqParamMap.get("invitor") != null) {
 			System.out.println("invitees and invitor defined");
-			String[] invitees = reqParamMap.get("invitees")[0].split(",");
+			String[] invitees = null;
+			if(reqParamMap.get("invitees")[0] != null && !reqParamMap.get("invitees")[0].isEmpty())
+				invitees = reqParamMap.get("invitees")[0].split(",");				
+			
 			responseJson.put("realCollabId", page.createNewPage(reqParamMap.get("invitor")[0], invitees));
 		}
 		
