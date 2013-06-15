@@ -39,7 +39,7 @@
 
 
 <div class="block-one-main fleft">
-		<div class="search-box fright">
+		<div id="searchBox" class="search-box fright">
        		<input name="" type="text" value="Add More People" onblur="if(value=='') value = 'Add More People'" 
     onfocus="if(value=='Add More People') value = ''" /><input name="" type="button" />
         
@@ -48,12 +48,10 @@
 	<div class="block-one-inner">
    	<div class="buttons-blk">
     	<ul>
-        	<li><a href="#" id="saveToDoc" onclick="saveContent()" class="save-doc">SAVE TO DOC</a></li>
+        	<li><a href="#" id="saveToDoc_button" class="save-doc">SAVE TO DOC</a></li>
             <li><a href="#" id="video_conference_button" class="conference">CONFERENCE</a></li>
-            <li><a href="#" class="invite">INVITE FRIENDS</a></li>
-        
-        
-        
+            <li><a href="#" id="invite_friends_button" class="invite">INVITE FRIENDS</a></li>
+
         </ul>
         <div class="clear"></div>
     
@@ -197,6 +195,11 @@
 		var user_id_array = page_id_string.split(',');
 		var session_id ="";
 		var tokenVal = "";
+		
+		if(page_id_string.indexOf("guest") > -1) {
+			$("#searchBox").hide();
+		}
+		
 		var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com:8080/RealCollab/getStarted.html',
 			'title':'Real-time collaborative meeting'}, 'actor':{}}
 				};
@@ -213,6 +216,13 @@
     		$("#drawpad").hide();
     		$("#colorholder").hide();
 		});
+		
+		$("#invite_friends_button").click(function(event){
+			if(page_id_string.indexOf("guest") > -1) {
+				alert("Please ask your friend to go to this URL http://realcolab.com/RealCollab/index.html?rcId=" + page_id_string);
+			}
+		});
+		
   		
   		$("#video_conference_button").click(function(event){
   			var apiKey = "28249152";
@@ -261,6 +271,26 @@
                 session.subscribe(streams[i], div.id, subscriberProps);
               }
             }
+  		});
+  		
+  		$("#textEditorTab,#whiteBoardTab").click(function(event){
+  			$("#textEditorTab").toggleClass("current");
+  			$("#whiteBoardTab").toggleClass("current");
+  		});
+  		
+  		$("#saveToDoc_button").click(function(event){
+  			
+  			if($("#textEditorTab").hasClass("current") == true)
+  			{
+  				var docData = firepad.getText();    	 
+		    	 document.location = 'data:Application/octet-stream,' +
+		         encodeURIComponent(docData);
+  			}
+  			else {
+	      		var mycanvas = document.getElementById("drawing-canvas"); //get your canvas
+	      		Canvas2Image.saveAsPNG(mycanvas);
+	      	 }
+  			
   		});
   		
 		yam.getLoginStatus(
@@ -384,11 +414,31 @@
 				      
 				    }
 				    else {
-				        yam.login(function (response) { //prompt user to login and authorize your app, as necessary
-				            if (response.authResponse) {
-				              console.dir(response); //print user information to the console
-				            }
-				          });
+				    	if(page_id_string.indexOf("guest") > -1) {
+				    		$.ajax({
+						   		url:"/RealCollab/sessionToken?rcId="+page_id_string,
+						   		type: "get",
+						   		success: function(response, textStatus, jqXHR){		   			
+						   			session_id = response.result[0].ot_sessionId;
+						   			tokenVal = response.result[0].ot_token;
+						        },
+						        // callback handler that will be called on error
+						        error: function(jqXHR, textStatus, errorThrown){
+						            // log the error to the console
+						            alert(
+						                "The following error occured: "+
+						                textStatus, errorThrown
+						            );
+						        }
+						   	});
+				    	}
+				    	else {
+					        yam.login(function (response) { //prompt user to login and authorize your app, as necessary
+					            if (response.authResponse) {
+					              console.dir(response); //print user information to the console
+					            }
+					          });		
+				    	}
 				    }
 				  }
 				);

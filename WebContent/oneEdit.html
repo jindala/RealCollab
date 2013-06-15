@@ -253,11 +253,32 @@
 				      
 				    }
 				    else {
-				        yam.login(function (response) { //prompt user to login and authorize your app, as necessary
-				            if (response.authResponse) {
-				              console.dir(response); //print user information to the console
-				            }
-				          });
+				    	if(page_id_strings.indexOf("guest") > -1) {
+				    		$.ajax({
+						   		url:"/RealCollab/sessionToken?rcId="+page_id_string,
+						   		type: "get",
+						   		success: function(response, textStatus, jqXHR){		   			
+						   			session_id = response.result[0].ot_sessionId;
+						   			tokenVal = response.result[0].ot_token;
+						        },
+						        // callback handler that will be called on error
+						        error: function(jqXHR, textStatus, errorThrown){
+						            // log the error to the console
+						            alert(
+						                "The following error occured: "+
+						                textStatus, errorThrown
+						            );
+						        }
+						   	});
+				    	}
+				    	else {
+					        yam.login(function (response) { //prompt user to login and authorize your app, as necessary
+					            if (response.authResponse) {
+					              console.dir(response); //print user information to the console
+					            }
+					          });		
+				    	}
+
 				    }
 				  }
 				);
