@@ -16,7 +16,7 @@
 					  function(response) {
 					    if (response.authResponse) {
 					      console.log("logged in");
-					      window.location.replace("http://www.realcolab.com:8080/RealCollab/inviteUsers.html");
+					      ajaxCallToCreateObject(response.user.id);
 					    }
 					    else {
 					        yam.login(function (response) { //prompt user to login and authorize your app, as necessary
@@ -29,35 +29,36 @@
 					);
 		});
 		
-	$("#continue_as_guest_button").click(function() {
-			
-			$.ajax({
-		   		url:"/RealCollab/sessionToken?invitor=guest&invitees=",
-		   		type: "get",
-		   		success: function(response, textStatus, jqXHR){	
-		            rcId = response.realCollabId;
-		            window.location.replace("http://realcolab.com:8080/RealCollab/index.html?rcId="+rcId);
-		        },
-		        // callback handler that will be called on error
-		        error: function(jqXHR, textStatus, errorThrown){
-		            // log the error to the console
-		            alert(
-		                "The following error occured: "+
-		                textStatus, errorThrown
-		            );
-		        }
-		   	});	
-
-			
-		});
+	$("#continue_as_guest_button").click(function() {	
+		ajaxCallToCreateObject("guest");	
 	});
+	
+	function ajaxCallToCreateObject(invitor) {
+		$.ajax({
+	   		url:"/RealCollab/sessionToken?invitor="+invitor,
+	   		type: "get",
+	   		success: function(response, textStatus, jqXHR){	
+	            rcId = response.realCollabId;
+	            window.location.replace("http://localhost:8080/RealCollab/index.html?rcId="+rcId);
+	        },
+	        // callback handler that will be called on error
+	        error: function(jqXHR, textStatus, errorThrown){
+	            // log the error to the console
+	            alert(
+	                "The following error occured: "+
+	                textStatus, errorThrown
+	            );
+	        }
+	   	});
+	}
+});
 	</script>
 </head>
 
 <body>
 <div id="main-container">
 <div class="header fleft">
-<div class="logo"><a href="#"><img src="images/logo.png" alt="a" /></a></div>
+<div class="logo"><a href="getStarted.html"><img src="images/logo.png" alt="a" /></a></div>
 
 
 
@@ -65,8 +66,8 @@
 
 <div class="login-blk fright">
 	<ul class="login-list">
-    	<li><a id="continue_as_guest_button" href="#" class="sign-in"></a></li>
-        <li><a id="get_started_button" href="#" class="sign-yammer"></a></li>
+    	<li><a id="continue_as_guest_button" href="javascript:void(0);" class="sign-in"></a></li>
+        <li><a id="get_started_button" href="javascript:void(0);" class="sign-yammer"></a></li>
     
     
     

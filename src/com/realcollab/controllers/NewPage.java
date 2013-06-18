@@ -14,14 +14,14 @@ import com.realcollab.api.adaptors.OpenTokAdaptor;
 
 public class NewPage {
 	final static String PAGE_COLLECTION = "page";
-	public synchronized String createNewPage(String invitorId, String[] invitees) throws UnknownHostException
+	public synchronized String createNewPage(String invitorId) throws UnknownHostException
 	{
 		System.out.println("invitor: " + invitorId);
 		DBUtil dbUtil = new DBUtil();		
 		
 		BasicDBObject newPageDoc = new BasicDBObject();
-		JSONArray inviteesArray = new JSONArray();
-		if(invitees != null && invitees.length > 0) {
+		//JSONArray inviteesArray = new JSONArray();
+		/*if(invitees != null && invitees.length > 0) {
 			for (String invitee: invitees) {
 				if(invitee.equals(""))
 					continue;
@@ -31,7 +31,7 @@ public class NewPage {
 				eachInviteeObj.put("status", 0);
 				inviteesArray.add(eachInviteeObj);
 			}
-		}
+		}*/
 		
 		// Get opentok session
 		OpenTokAdaptor otAd = new OpenTokAdaptor();
@@ -43,7 +43,7 @@ public class NewPage {
 		newPageDoc.put("realCollabId", realCollabId);
 		newPageDoc.put("ot_sessionId", sessionId);
 		newPageDoc.put("ot_token", token);
-		newPageDoc.put("invitee", inviteesArray);
+		//newPageDoc.put("invitee", inviteesArray);
 		newPageDoc.put("invitor", invitorId);
 		
 		String id = null;

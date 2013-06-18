@@ -9,6 +9,8 @@
 <script src="js/jquery-ui-1.8.17.custom.min.js" type="text/javascript" ></script>
 <script src="js/jquery.mousewheel.js" type="text/javascript"></script> 
 <script src="js/jquery.mCustomScrollbar.js"></script>
+<script src="js/jquery.reveal.js"></script>
+	<!-- Third party js --> 
   <script src='https://cdn.firebase.com/v0/firebase.js'></script>
   <script type="text/javascript" data-app-id="Lei9oAybqAlZ2ii2gZpYxw" src="https://assets.yammer.com/platform/yam.js"></script>
   <script src='https://swww.tokbox.com/v1.1/js/TB.min.js'></script>
@@ -29,7 +31,7 @@
 <body>
 <div id="main-container">
 <div class="header">
-<div class="logo"><a href="#"><img src="images/logo.png" alt="a" /></a></div>
+<div class="logo"><a href="getStarted.html"><img src="images/logo.png" alt="a" /></a></div>
 
 
 
@@ -48,9 +50,9 @@
 	<div class="block-one-inner">
    	<div class="buttons-blk">
     	<ul>
-        	<li><a href="#" id="saveToDoc_button" class="save-doc">SAVE TO DOC</a></li>
-            <li><a href="#" id="video_conference_button" class="conference">CONFERENCE</a></li>
-            <li><a href="#" id="invite_friends_button" class="invite">INVITE FRIENDS</a></li>
+        	<li><a href="javascript:void(0);" id="saveToDoc_button" class="save-doc">SAVE TO DOC</a></li>
+            <li><a href="javascript:void(0);" id="video_conference_button" class="conference">CONFERENCE</a></li>
+            <li><a href="javascript:void(0);" id="invite_friends_button" data-reveal-id="modal1" class="invite">INVITE FRIENDS</a></li>
 
         </ul>
         <div class="clear"></div>
@@ -129,6 +131,50 @@
 
 </div>
 
+<!--  pop up start here-->
+ 
+             <div class="invite-friends-blk reveal-modal" id="modal1" style="display:none;">
+             	<a href="javascript:void(0);" class="cboxClose close close-reveal-modal">&nbsp;</a>
+    			<div class="invite-friends-inner">
+                	<h2>Invite Friends</h2>
+                    <div class="plate-outer">
+                    	<div class="plate-head fleft">
+                        		<img id="user_img" src="images/head-img.jpg" alt="a" align="left" />
+                                <div class="head-content">
+                                		<h3 id="user_name"></h3>
+                                        <p id="user_position"></p>
+                                </div>
+                        </div>
+                        <div id="user_groups" class="select-group-outer fright">
+                            
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="search-outer" id="user_group_users_header">
+                    	<h3 id="group_title" class="fleft"></h3>
+                    	<div class="find-blk fright">
+	                        <div class="fleft m-gin">
+	                        	<img src="images/find-friend.png" alt="a"  class="fleft"/>&nbsp;&nbsp;  <span class="find-txt">Find your friend</span>
+	                        </div>
+	                        <div class="find-box fright">
+	       						<input name="" type="text" value="Type a friend's name" onblur="if(value=='') value = 'Type a friend's name'" 
+	    								onfocus="if(value=='Type a friend's name') value = ''" /><input name="" type="button" />
+	        				</div>
+                        </div>
+                    	<div class="clear"></div>
+                    </div> 
+                    
+                    
+                    <div class="friends-list-outer" id="scroll_4">
+                    	<ul id="user_group_users_collection" class="friends-list">
+                        </ul>
+                    </div>
+                    
+                    
+                 </div>
+            </div>   
+<!--  pop up end here-->
+
   <!--for custom scroll start here-->
  <script>
 		(function($){
@@ -145,6 +191,11 @@
 					}
 				});	
 				$("#scroll_3").mCustomScrollbar({
+					scrollButtons:{
+						enable:true
+					}
+				});	
+				$("#scroll_4").mCustomScrollbar({
 					scrollButtons:{
 						enable:true
 					}
@@ -217,9 +268,81 @@
     		$("#colorholder").hide();
 		});
 		
+    	$("#user_group_users_header").hide();
+    	$("#scroll_4").hide();
 		$("#invite_friends_button").click(function(event){
 			if(page_id_string.indexOf("guest") > -1) {
-				alert("Please ask your friend to go to this URL http://realcolab.com/RealCollab/index.html?rcId=" + page_id_string);
+				alert("Please ask your friend to go to this URL http://realcolab.com:8080/RealCollab/index.html?rcId=" + page_id_string);
+			} else {
+				yam.request({
+			        url: "https://www.yammer.com/api/v1/users/current.json",     //this is one of many REST endpoints that are available
+			        method: "GET",
+			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+			        	"include_group_memberships":"TRUE"
+			        },
+			        success: function (user) { //print message response information to the console
+			        	console.dir(user);
+			        
+			          $("#user_name").html(user.full_name);
+			          loggedin_user = user.id;
+			          var replaced_width_src = user.mugshot_url_template.replace("{width}", "94");
+			          var replaced_src = replaced_width_src.replace("{height}", "94");
+			          $("#user_img").attr('src', replaced_src);
+			          $("#user_position").html(user.job_title);
+			          $("#user_name").show();
+			          $("#user_img").show();				          
+			          
+			          var groups = user.group_memberships;
+			          if(groups.length > 0) {
+			        	  $("#user_groups").html("<h3>Select a group:</h3>");
+			          }
+			          for(var i=0;i<groups.length;i++) {
+			        	  $("#user_groups").append('<a href="javascript:void(0);"><div class="snap-fish-button" id="'+groups[i].id +'" name="user_group_name">'+groups[i].full_name+'</div></a>');
+			          }
+			          
+			          if(groups.length > 0) {
+			          	$("div[name=user_group_name]").click(function() {
+			     			var selected_group_name= this.value;
+			          		console.dir("group selected: " +this.id);
+			          	  // Get users of a group
+						  yam.request({
+						        url: "https://www.yammer.com/api/v1/users/in_group/"+ this.id +".json",
+						        method: "GET",
+						        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+						        	
+						        },
+						        success: function (group_users) { //print message response information to the console
+						        	$("#user_group_users_collection").empty();
+						        	$("#group_title").html(selected_group_name);
+						        	$("#user_group_users_header").show();
+						        	$("#scroll_4").show();
+						          console.dir(group_users);
+						          for(var i=0;i<group_users.users.length;i++) {
+						        	  var usr_replaced_width_src = group_users.users[i].mugshot_url_template.replace("{width}", "130");
+							          var usr_replaced_src = usr_replaced_width_src.replace("{height}", "130");
+						        	  $("#user_group_users_collection").append('<li><img src="'+usr_replaced_src+'" alt="a" /><h3>'+ group_users.users[i].full_name +'</h3><a id="'+ group_users.users[i].id +'" class="invite-button" href="javascript:void(0);">invite</a></li>');
+						          }
+                                
+						          $("a.invite-button").click(function() {
+						        	  	$(this).attr("disabled", "disabled");
+						        	  	$(this).addClass("select");
+							        	final_id=$(this).attr('id');
+							        	selected_user_list += final_id + ",";
+							   			alert(selected_user_list);
+							            $(this).html("invited");
+						          });
+						        },
+						        error: function (group_users) {
+						          alert("group_users:There was an error with the request.");
+						        }
+						      });
+						});
+			          }
+			        },
+			        error: function (user) {
+			          alert("There was an error with the request.");
+			        }
+			      });
 			}
 		});
 		
@@ -301,7 +424,7 @@
 				      activity_string.activity.actor['email'] = response.user.contact.email_addresses[0].address;
 				      var final_activity_string = JSON.stringify(activity_string);
 				      // Post Activity to user's feed
-			      	  yam.request({
+			      	 /* yam.request({
 					        url: "https://www.yammer.com/api/v1/activity.json",     //this is one of many REST endpoints that are available
 					        method: "POST",
 					        dataType: "json",
@@ -313,7 +436,7 @@
 					        error: function (activity) {
 					          alert("activity:There was an error with the request.");
 					        }
-					      });
+					      });*/
 				      
 				      
 			      	$.ajax({
@@ -323,7 +446,7 @@
 				   			session_id = response.result[0].ot_sessionId;
 				   			tokenVal = response.result[0].ot_token;
 				   			
-				   			$("#num_collaborators").html('<span>' + response.result[0].invitee.length + '</span> Collaborators');
+				   			//$("#num_collaborators").html('<span>' + response.result[0].invitee.length + '</span> Collaborators');
 						    /*for(var i=0; i<response.result[0].invitee.length-1;i++) {
 						    	  yam.request({
 								        url: "https://www.yammer.com/api/v1/users/" + response.result[0].invitee[i].yammer_id + ".json",     //this is one of many REST endpoints that are available
