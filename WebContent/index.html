@@ -26,6 +26,38 @@
   <script src="Canvas2Image.js"></script>
   <script src="base64.js"></script>
   
+  <style type="text/css">
+	.navigationBtn{
+	  margin: 0 5px;
+  	  display: inline-block;
+ 	  width:800px;
+ 	  heigth:700px;
+ 	  position: relative;
+	}
+	.firepad {
+      width: 880px;
+      height: 720px;
+      /*background-color: #f62; *//* dark orange background */
+    }
+    #colorholder {
+	  width: 480px;
+	  height: 30px;
+	  border: 2px solid #424547;
+	  margin-top: 5px;
+	}
+	
+	#drawing-canvas {
+	  border: 2px solid #999
+	}
+	
+	.colorbox {
+	  width: 22px;
+	  height: 22px;
+	  margin: 1px;
+	  display: inline-block;
+	  border: 2px solid black;
+	}
+  </style>
 </head>
 
 <body>
@@ -41,6 +73,11 @@
 
 
 <div class="block-one-main fleft">
+		<div id="searchBox" class="search-box fleft">
+       		<input id="meetingTitle" name="" type="text" value="Meeting Title ..." onblur="if(value=='') value = 'Meeting Title ...'" 
+    onfocus="if(value=='Meeting Title ...') value = ''" /><input id="meetingTitleButton" name="" type="button" />
+        
+        </div>
 		<div id="searchBox" class="search-box fright">
        		<input name="" type="text" value="Add More People" onblur="if(value=='') value = 'Add More People'" 
     onfocus="if(value=='Add More People') value = ''" /><input name="" type="button" />
@@ -81,10 +118,11 @@
 		   </div>
 	   </div>
     </div>
+    <div class="next-blk fleft">
+    	<div id="colorholder"></div>
+    </div>
 	<div class="next-blk fright">
-	<div id="colorholder"></div>
     	<a href="#" class="next"></a>
-    
     </div>
 	<div class="clear"></div>
 	
@@ -241,9 +279,6 @@
 			$("#searchBox").hide();
 		}
 		
-		var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com:8080/RealCollab/getStarted.html',
-			'title':'Real-time collaborative meeting'}, 'actor':{}}
-				};
 		$("#drawpad").hide();
 		$("#colorholder").hide();
 		
@@ -322,7 +357,7 @@
 							  			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
 							  			        method: "POST",
 							  			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-							  			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://www.realcolab.com:8080/RealCollab/index.html?rcId="+page_id_string,
+							  			        	"body":"I have started an online meeting. This will help us in real-time collaboration and video conferencing. Please use following link to join the meeting. \n http://www.realcolab.com:8080/RealCollab/index.html?rcId="+page_id_string + "\n\nThanks!",
 							  			        	"direct_to_id":invited_user_id
 							  			        },
 							  			        success: function (message) { //print message response information to the console
@@ -419,29 +454,46 @@
   			
   		});
   		
+  		$("#meetingTitleButton").click(function(event){
+  			$("#meetingTitle").attr("disabled", true);
+  			var title = "Real-time collaborative meeting";
+  			if($("#meetingTitle").value != 'Meeting Title ...' && $("#meetingTitle").value != '') {
+  				title = $("#meetingTitle").value;
+  			}
+  			
+  			var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com:8080/RealCollab/getStarted.html',
+  				'title':'Real-time collaborative meeting'}, 'actor':{}}
+  					};
+  			yam.getLoginStatus(
+  				  function(response) {
+  					if (response.authResponse) {
+  				      console.log("logged in");
+  				      activity_string.activity.actor['name'] = response.user.full_name;
+  				      activity_string.activity.actor['email'] = response.user.contact.email_addresses[0].address;
+  				      activity_string.activity.object.title = title;
+  				      var final_activity_string = JSON.stringify(activity_string);
+  				 	  // Post Activity to user's feed
+ 			      	  yam.request({
+ 					        url: "https://www.yammer.com/api/v1/activity.json",     //this is one of many REST endpoints that are available
+ 					        method: "POST",
+ 					        dataType: "json",
+ 					        contentType: "application/json",
+ 					        data: activity_string,
+ 					        success: function (activity) { //print message response information to the console
+ 					          console.dir(activity);	
+ 					        },
+ 					        error: function (activity) {
+ 					          console.log("activity:There was an error with the request.");
+ 					        }
+ 					      });
+  					}
+  				  });
+  		});
+  		
 		yam.getLoginStatus(
 				  function(response) {
 				    if (response.authResponse) {
-				      console.log("logged in");
-				      activity_string.activity.actor['name'] = response.user.full_name;
-				      activity_string.activity.actor['email'] = response.user.contact.email_addresses[0].address;
-				      var final_activity_string = JSON.stringify(activity_string);
-				      // Post Activity to user's feed
-			      	 /* yam.request({
-					        url: "https://www.yammer.com/api/v1/activity.json",     //this is one of many REST endpoints that are available
-					        method: "POST",
-					        dataType: "json",
-					        contentType: "application/json",
-					        data: activity_string,
-					        success: function (activity) { //print message response information to the console
-					          console.dir(activity);	
-					        },
-					        error: function (activity) {
-					          alert("activity:There was an error with the request.");
-					        }
-					      });*/
-				      
-				      
+		      
 				      	$.ajax({
 					   		url:"/RealCollab/sessionToken?rcId="+page_id_string,
 					   		type: "get",
@@ -549,7 +601,7 @@
 			}
 		);
 		
-		
+
 		//Initialize Firebase 
 	      var firepadRef = new Firebase('https://realcollab.firebaseio.com/' + page_id_string);
 		  var firepadDiv = document.getElementById('firepad');
