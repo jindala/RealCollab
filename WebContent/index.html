@@ -48,55 +48,46 @@
         </div>
         <div class="clear"></div>
 	<div class="block-one-inner">
-   	<div class="buttons-blk">
-    	<ul>
-        	<li><a href="javascript:void(0);" id="saveToDoc_button" class="save-doc">SAVE TO DOC</a></li>
-            <li><a href="javascript:void(0);" id="video_conference_button" class="conference">CONFERENCE</a></li>
-            <li><a href="javascript:void(0);" id="invite_friends_button" data-reveal-id="modal1" class="invite">INVITE FRIENDS</a></li>
-
-        </ul>
-        <div class="clear"></div>
-    
-    
-    
-    </div> 
+	   	<div class="buttons-blk">
+	    	<ul>
+	        	<li><a href="javascript:void(0);" id="saveToDoc_button" class="save-doc">SAVE TO DOC</a></li>
+	            <li><a href="javascript:void(0);" id="video_conference_button" class="conference">CONFERENCE</a></li>
+	            <li><a href="javascript:void(0);" id="invite_friends_button" data-reveal-id="modal1" class="invite">INVITE FRIENDS</a></li>
+	
+	        </ul>
+	        <div class="clear"></div>
+	    </div> 
    
    
-   <div class="tab-outer-main">
-   	<div class="tabber">
-    	<ul class="tab-list">
-        	<li><a id="textEditorTab" href="javascript:void(0);" class="current">Text-Editor</a></li>
-            <li><a id="whiteBoardTab" href="javascript:void(0);" >white board</a></li>     
-        </ul>
-    	 <div class="clear"></div>
-    
-    </div>
-   
-   <div class="tabber-content-blk-outer">
-   	<div class="tabber-content-blk-inner content-blk" id="scroll_1">    
-     	<div id="drawpad">
-			<canvas id="drawing-canvas" width="880" height="720"></canvas>
-		</div>
-		<div id="colorholder"></div>
-				    
-		<div id="firepad" style="border: 2px solid #999;width:880px;height:720px;clear:both;"></div>
-    </div>
-   
-   
-  
-   
-   
-   </div>
-   
-   </div>
-   
-    
+	   <div class="tab-outer-main">
+		   	<div class="tabber">
+		    	<ul class="tab-list">
+		        	<li><a id="textEditorTab" href="javascript:void(0);" class="current">Text-Editor</a></li>
+		            <li><a id="whiteBoardTab" href="javascript:void(0);" >white board</a></li>     
+		        </ul>
+		    	 <div class="clear"></div>
+		    
+		    </div>
+	   
+		   <div class="tabber-content-blk-outer">
+			   	<div class="tabber-content-blk-inner content-blk" id="scroll_1">    
+			     	<div id="drawpad">
+						<canvas id="drawing-canvas" width="880" height="720"></canvas>
+					</div>
+					
+							    
+					<div id="firepad" style="border: 2px solid #999;width:880px;height:720px;clear:both;"></div>
+			    </div>
+		   </div>
+	   </div>
     </div>
 	<div class="next-blk fright">
+	<div id="colorholder"></div>
     	<a href="#" class="next"></a>
     
     </div>
 	<div class="clear"></div>
+	
 </div>
 
 <div class="block-conference-main fright">
@@ -243,7 +234,6 @@
 	$(document).ready(function(){
 		var sPageURL = window.location.search.substring(1);
 		var page_id_string = sPageURL.replace("rcId=", "");
-		var user_id_array = page_id_string.split(',');
 		var session_id ="";
 		var tokenVal = "";
 		
@@ -302,7 +292,7 @@
 			          
 			          if(groups.length > 0) {
 			          	$("div[name=user_group_name]").click(function() {
-			     			var selected_group_name= this.value;
+			     			var selected_group_name= $(this).html();
 			          		console.dir("group selected: " +this.id);
 			          	  // Get users of a group
 						  yam.request({
@@ -326,9 +316,22 @@
 						          $("a.invite-button").click(function() {
 						        	  	$(this).attr("disabled", "disabled");
 						        	  	$(this).addClass("select");
-							        	final_id=$(this).attr('id');
-							        	selected_user_list += final_id + ",";
-							   			alert(selected_user_list);
+							        	var invited_user_id=$(this).attr('id');
+							   			// Send Messaged to users
+							        	  yam.request({
+							  			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
+							  			        method: "POST",
+							  			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
+							  			        	"body":"I would like to collaborate with you in real time. Please click to join \n http://www.realcolab.com:8080/RealCollab/index.html?rcId="+page_id_string,
+							  			        	"direct_to_id":invited_user_id
+							  			        },
+							  			        success: function (message) { //print message response information to the console
+							  			          console.dir(message);	
+							  			        },
+							  			        error: function (message) {
+							  			          alert("message:There was an error with the request.");
+							  			        }
+							  			  });
 							            $(this).html("invited");
 						          });
 						        },
@@ -439,42 +442,22 @@
 					      });*/
 				      
 				      
-			      	$.ajax({
-				   		url:"/RealCollab/sessionToken?rcId="+page_id_string,
-				   		type: "get",
-				   		success: function(response, textStatus, jqXHR){		   			
-				   			session_id = response.result[0].ot_sessionId;
-				   			tokenVal = response.result[0].ot_token;
-				   			
-				   			//$("#num_collaborators").html('<span>' + response.result[0].invitee.length + '</span> Collaborators');
-						    /*for(var i=0; i<response.result[0].invitee.length-1;i++) {
-						    	  yam.request({
-								        url: "https://www.yammer.com/api/v1/users/" + response.result[0].invitee[i].yammer_id + ".json",     //this is one of many REST endpoints that are available
-								        method: "GET",
-								        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-								        	"include_group_memberships":"TRUE"
-								        },
-								        success: function (user) { //print message response information to the console
-									          var replaced_width_src = user.mugshot_url_template.replace("{width}", "100");
-									          var replaced_src = replaced_width_src.replace("{height}", "100");
-								        	  $("#content_right").append('<div id="chef_profile" class="chef_class"><img src="'+ replaced_src +'" alt="Name" class="profile_img"><p>'+ user.full_name +'</p></div>');			
-											
-								        },
-								        error: function (user) {
-								          alert("There was an error with the request.");
-								        }
-								      });
-						      }*/
-				        },
-				        // callback handler that will be called on error
-				        error: function(jqXHR, textStatus, errorThrown){
-				            // log the error to the console
-				            alert(
-				                "The following error occured: "+
-				                textStatus, errorThrown
-				            );
-				        }
-				   	});
+				      	$.ajax({
+					   		url:"/RealCollab/sessionToken?rcId="+page_id_string,
+					   		type: "get",
+					   		success: function(response, textStatus, jqXHR){		   			
+					   			session_id = response.result[0].ot_sessionId;
+					   			tokenVal = response.result[0].ot_token;				   			
+					        },
+					        // callback handler that will be called on error
+					        error: function(jqXHR, textStatus, errorThrown){
+					            // log the error to the console
+					            alert(
+					                "The following error occured: "+
+					                textStatus, errorThrown
+					            );
+					        }
+					   	});
 		        	
 				      // Get Invite Suggestion
 				     /* yam.request({
@@ -563,8 +546,8 @@
 					          });		
 				    	}
 				    }
-				  }
-				);
+			}
+		);
 		
 		
 		//Initialize Firebase 
@@ -577,46 +560,6 @@
 		  //Create Firepad (with rich text toolbar and shortcuts enabled)
 		  var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
 		      { richTextShortcuts: true, richTextToolbar: true });
-	      
-	      //Save on Client end
-	      /*function saveContent(){
-	    	 var btn_Type = document.getElementById("Save").innerHTML;
-	    	 
-	    	 if(btn_Type == 'Save Doc'){
-		    	 var docData = firepad.getText();    	 
-		    	 document.location = 'data:Application/octet-stream,' +
-		         encodeURIComponent(docData);
-	      	 } else {
-	      		var mycanvas = document.getElementById("drawing-canvas"); //get your canvas
-	      		Canvas2Image.saveAsPNG(mycanvas);
-	      	 }
-	      };*/
-	      
-	      //Bookmark documents
-	      /*function bookmarkDoc(){
-	    	 //alert("inside bookmark!");
-	    	 var bookData = firepad.getText(); 
-	    	 
-	    	 //fire off the request to /saveDoc
-		     var request = $.ajax({
-		        url: "/RealCollab/saveDoc",
-		        type: "post",
-		        data: docData,
-		        
-		        success: function(response, textStatus, jqXHR){
-		            // log a message to the console
-		            alert("beep heap: " + response);  		
-			    },
-		        // callback handler that will be called on error
-		        error: function(jqXHR, textStatus, errorThrown){
-		            // log the error to the console
-		            alert(
-		                "The following error occured: "+
-		                textStatus, errorThrown
-		            );
-		        }
-		     });
-	      }*/
 		
 	      var pixSize = 2, lastPoint = null, currentColor = "000", mouseDown = 0;
 	  	
