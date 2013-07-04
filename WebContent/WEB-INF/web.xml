@@ -44,21 +44,9 @@
     <servlet-name>OTSessionTokenServlet</servlet-name>
     <servlet-class>com.realcollab.servlets.OTSessionTokenServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>RegistrationServlet</servlet-name>
-    <servlet-class>servlet.RegistrationServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>FeedbackServlet</servlet-name>
-    <servlet-class>servlet.FeedbackServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>PaymentServlet</servlet-name>
-    <servlet-class>servlet.PaymentServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>EventServlet</servlet-name>
-    <servlet-class>servlet.EventServlet</servlet-class>
+   <servlet>
+    <servlet-name>IndexServlet</servlet-name>
+    <servlet-class>com.realcollab.servlets.IndexServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>saveFileServlet</servlet-name>
@@ -66,25 +54,14 @@
   </servlet>
   
   <servlet-mapping>
+    <servlet-name>IndexServlet</servlet-name>
+    <url-pattern>/start</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>OTSessionTokenServlet</servlet-name>
     <url-pattern>/sessionToken</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>RegistrationServlet</servlet-name>
-    <url-pattern>/registration</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>FeedbackServlet</servlet-name>
-    <url-pattern>/feedback</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>PaymentServlet</servlet-name>
-    <url-pattern>/payment</url-pattern>
-  </servlet-mapping>
-   <servlet-mapping>
-    <servlet-name>EventServlet</servlet-name>
-    <url-pattern>/event</url-pattern>
-  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>saveFileServlet</servlet-name>
     <url-pattern>/saveDoc</url-pattern>
