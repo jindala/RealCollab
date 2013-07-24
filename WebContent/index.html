@@ -35,7 +35,7 @@
 	
 	function ajaxCallToCreateObject(invitor) {
 		$.ajax({
-	   		url:"/RealCollab/sessionToken?invitor="+invitor,
+	   		url:"/sessionToken?invitor="+invitor,
 	   		type: "get",
 	   		success: function(response, textStatus, jqXHR){	
 	            rcId = response.realCollabId;
