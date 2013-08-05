@@ -87,7 +87,7 @@ a.next{ width:36px; height:24px; display:block; background:url(../images/next-ar
 a.next:hover{ background:url(../images/next-arrow-h.png) left top no-repeat;}
 
 .block-conference-main{ width:270px;}
-.block-conference-inner{  background:url(../images/inner-bg.jpg) repeat; border: solid 10px #fff; box-shadow:0px 0px 5px #868686; padding:15px;  min-height: 591px;}
+.block-conference-inner{  background:url(../images/inner-bg.jpg) repeat; border: solid 10px #fff; box-shadow:0px 0px 5px #868686; padding:15px;  min-height: -11px;}
 .block-conference-inner h1{ background:url(../images/coll-head-bg.png) left top no-repeat; height:45px; font-weight:normal; padding: 10px 0 0 55px;}
 .block-conference-inner h1 span{font-family:Arial, Helvetica, sans-serif;  text-shadow: 0 2px 1px #000000; color:#fff; font-size:18px; text-transform:uppercase;}
 ul.people-list{ margin:0px; padding:0px;}

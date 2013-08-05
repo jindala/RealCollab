@@ -62,7 +62,7 @@
   </style>
   
    <style>
-#draggable {/* width: 713px; height: 150px; padding: 0.5em;*/  cursor:pointer; z-index: 9; }
+#draggable {/* width: 713px; height: 150px; padding: 0.5em;*/  cursor:move; z-index: 9; }
 </style>
 <script>
 $(function() {
@@ -146,14 +146,14 @@ $(function() {
     </div>
     <div class="clear"></div>
 
-	<div class="block-conference-inner" id="draggable">
+	<div class="block-conference-inner" >
     	<!--<h1><span>conference</span></h1> -->
         
         <div id="scroll_3" class="content-blk">
         	<!--  <div id="myPublisherDiv" style="width:207px;"></div>-->
         	<ul id="conference_stream_list" class="people-list">
         
-        	<li><div id="myPublisherDiv" style="width:207px;height:177px;"></div></li>
+        	<li><div id="myVideo"></div></li>
         </ul></div>
         
         
@@ -295,7 +295,7 @@ $(function() {
     	$("#scroll_4").hide();
 		$("#invite_friends_button").click(function(event){
 			if(page_id_string.indexOf("guest") > -1) {
-				alert("Please ask your friend to go to this URL http://realcolab.com:8080/collab.html?rcId=" + page_id_string);
+				alert("Please ask your friend to go to this URL http://realcolab.com/collab.html?rcId=" + page_id_string);
 				return;
 			} else {
 				yam.request({
@@ -356,7 +356,7 @@ $(function() {
 							  			        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
 							  			        method: "POST",
 							  			        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-							  			        	"body":"I have started an online meeting. This will help us in real-time collaboration and video conferencing. Please use following link to join the meeting. \n http://www.realcolab.com:8080/collab.html?rcId="+page_id_string + "\n\nThanks!",
+							  			        	"body":"I have started an online meeting. This will help us in real-time collaboration and video conferencing. Please use following link to join the meeting. \n http://www.realcolab.com/collab.html?rcId="+page_id_string + "\n\nThanks!",
 							  			        	"direct_to_id":invited_user_id
 							  			        },
 							  			        success: function (message) { //print message response information to the console
@@ -398,7 +398,12 @@ $(function() {
             session.addEventListener('streamCreated', streamCreatedHandler);
             session.connect(apiKey, token);
             function sessionConnectedHandler(event) {
-              var publisher = TB.initPublisher(apiKey, 'myPublisherDiv');
+            	var parentDiv = document.getElementById("myVideo");
+            	var replacementDiv = document.createElement("div");
+            	replacementDiv.setAttribute('style', 'width:207px;height:177px;');
+            	replacementDiv.id = "myPublisherDiv";
+            	parentDiv.appendChild(replacementDiv);
+              var publisher = TB.initPublisher(apiKey, replacementDiv.id);
               session.publish(publisher);
 
               // Subscribe to streams that were in the session when we connected
@@ -460,7 +465,7 @@ $(function() {
   				title = $("#meetingTitle").value;
   			}
   			
-  			var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com:8080',
+  			var activity_string = {'activity':{'action': 'create','object':{'url':'http://www.realcolab.com',
   				'title':'Real-time collaborative meeting'}, 'actor':{}}
   					};
   			yam.getLoginStatus(
@@ -529,7 +534,7 @@ $(function() {
 										        url: "https://www.yammer.com/api/v1/messages.json",     //this is one of many REST endpoints that are available
 										        method: "POST",
 										        data: {    //use the data object literal to specify parameters, as documented in the REST API section of this developer site
-										        	"body":"I want you to know about RealCollab. I have been using this tool and this has provided me great productivity at my work. Please click following URL to try \n http://www.realcolab.com:8080/RealCollab/getStarted.html",
+										        	"body":"I want you to know about RealCollab. I have been using this tool and this has provided me great productivity at my work. Please click following URL to try \n http://www.realcolab.com/RealCollab/getStarted.html",
 										        	"direct_to_id":$(this).attr('name')
 										        },
 										        success: function (message) { //print message response information to the console
